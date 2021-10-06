@@ -1,31 +1,73 @@
 import { useState, useEffect } from 'react'
 
+
+/**
+ * Great job overall Chad! I really liked what you've done.
+ * There were a few things that could have been done better
+ * but the essense was there and it was working! Great job!
+ * 
+ * Let me know if any of the comments doesn't make sense and
+ * we can go over those
+ * 
+ * You did very well with this task, congrats!
+ *  
+ */
+
+
+
 const Form = () => {
+  // Awesome use of useState
   const [inputs, setInputs] = useState({});
   const [submitMessage, setSubmitMessage] = useState("");
 
-  useEffect(() => { }, [submitMessage]);
+  // This makes no sense =)
+  // useEffect(() => { }, [submitMessage]);
 
+  // Loved this helper method
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    setInputs(values => ({ ...values, [name]: value }))
+    setInputs(values => ({ ...values, [name]: value })) // Great use of the spread operator
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); // Nice! No automatic reloads
+
     fetch("https://api-how-much-do-you-know-node.herokuapp.com/user/add-user", {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(inputs)
     }).then(response => {
+      
       if (response.status === 200) {
-        setSubmitMessage("Thank you, the user has been added");
-        setInputs({});
+        /** This is fine, but I was looking to see if you could use the message you get
+         *  from the API response.
+         * 
+         *  Something like this:
+         *  
+         * Line 36 which you return the result of this promisse
+         * Lines 43-47 where we receive the result of the first promisse(line 23) after returning it(line 36)
+         * then we use that result to setSumitMessage by accessing the message prop
+         */
+        
+        // setSubmitMessage("Thank you, the user has been added");
+
+        setInputs({}); // Nice, easy way of resetting the form! Great job
+
+        return response.json()
       } else {
         setSubmitMessage("Sorry, something went wrong! Please try again later");
       }
-    });
+    }).then(result => {
+      setSubmitMessage(result.message);
+    }).catch(error => {
+      // When working with promisses you must use a try/catch for async functions or 
+      // finish your chaining then(), with a catch().
+      // If any weird error would have happened before reaching line 23 the website would crash
+      // because you did not handle errors.
+      console.log(error);
+      setSubmitMessage("Sorry, something went wrong! Please try again later");
+    })
   }
 
   return (
@@ -45,10 +87,10 @@ const Form = () => {
           <input
             type="text"
             name="first_name"
-            value={inputs.first_name || ""}
+            value={inputs.first_name || ""} // Why did you add the OR here?
             onChange={handleChange}
             minLength="4"
-            required
+            required // This works, but if this "required" was not here, how would you validate the input?
             className={"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"}
           />
         </div>
@@ -59,7 +101,7 @@ const Form = () => {
           <input
             type="text"
             name="last_name"
-            value={inputs.last_name || ""}
+            value={inputs.last_name || ""} // Why did you add the OR here?
             onChange={handleChange}
             minLength="4"
             required
@@ -73,7 +115,7 @@ const Form = () => {
           <input
             type="email"
             name="email"
-            value={inputs.email || ""}
+            value={inputs.email || ""} // Why did you add the OR here?
             onChange={handleChange}
             required
             className={"shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"}
@@ -86,7 +128,7 @@ const Form = () => {
           <input
             type="text"
             name="occupation"
-            value={inputs.occupation || ""}
+            value={inputs.occupation || ""} // Why did you add the OR here?
             onChange={handleChange}
             minLength="4"
             required
